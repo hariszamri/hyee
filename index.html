@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rindu tak?</title>
+    <style>
+        /* Setup layout supaya semuanya duduk center dan sedap mata memandang */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #fff0f5; /* Warna background pink lembut */
+            text-align: center;
+            overflow: hidden; /* Supaya bila butang membesar sangat, takde scrollbar */
+        }
+
+        h1 {
+            color: #d81b60;
+            margin-bottom: 20px;
+        }
+
+        .btn-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap; /* Supaya butang tak bertindih teruk sangat */
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease; /* Bagi effect membesar tu nampak smooth */
+        }
+
+        #yes-btn {
+            background-color: #e91e63;
+            color: white;
+            font-size: 20px;
+            padding: 15px 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        #yes-btn:hover {
+            background-color: #c2185b;
+        }
+
+        #no-btn {
+            background-color: #9e9e9e;
+            color: white;
+            font-size: 20px;
+            padding: 15px 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        img {
+            max-width: 250px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://media.giphy.com/media/ZBQhoZC0nqsmSviPcG/giphy.gif" alt="Cute Cat" id="main-gif">
+    
+    <h1 id="question">Rindu aku tk? 🥺</h1>
+    
+    <div class="btn-container">
+        <button id="yes-btn" onclick="sayYes()">YES!</button>
+        <button id="no-btn" onclick="growYes()">NO.</button>
+    </div>
+
+    <script>
+        let yesSize = 20;
+        let paddingV = 15;
+        let paddingH = 30;
+        
+        // Senarai ayat bila dia tekan butang NO
+        const noTexts = [
+            "Eh betul ni?", 
+            "Fikir masak-masak!", 
+            "Janganlah macam ni 😭", 
+            "Seriuslah tak rindu?", 
+            "Hati batu betullah!", 
+            "Tekan YES je lah senang!"
+        ];
+        let textIndex = 0;
+
+        function growYes() {
+            const yesBtn = document.getElementById('yes-btn');
+            const noBtn = document.getElementById('no-btn');
+            
+            // Tambah saiz font dan padding butang YES
+            yesSize += 30;
+            paddingV += 15;
+            paddingH += 25;
+            yesBtn.style.fontSize = `${yesSize}px`;
+            yesBtn.style.padding = `${paddingV}px ${paddingH}px`;
+
+            // Tukar teks butang NO ikut senarai array
+            noBtn.innerText = noTexts[textIndex];
+            textIndex = (textIndex + 1) % noTexts.length;
+        }
+
+        function sayYes() {
+            // Tukar GIF gembira
+            document.getElementById('main-gif').src = "https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif"; 
+            
+            // Tukar ayat 
+            document.getElementById('question').innerText = "Hehehe tahu pun rindu! 🥰";
+            
+            // Sembunyikan butang lepas dia tekan YES
+            document.querySelector('.btn-container').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
