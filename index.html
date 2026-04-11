@@ -3,40 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rindu tak?</title>
+    <title>Sila Jawab Jujur</title>
     <style>
-        /* Setup layout supaya semuanya duduk center dan sedap mata memandang */
-        body {
+        /* CSS Utama */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff; /* Latar belakang Putih */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Modal Overlay untuk paksa klik pertama (untk audio) */
+        #modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #fff0f5; /* Warna background pink lembut */
-            text-align: center;
-            overflow: hidden; /* Supaya bila butang membesar sangat, takde scrollbar */
+            z-index: 999; /* Paling atas */
+        }
+
+        #modal-overlay h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #modal-overlay button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #modal-overlay button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Kandungan Utama */
+        #main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 90%;
+        }
+
+        img {
+            max-width: 250px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
         }
 
         h1 {
             color: #d81b60;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 28px;
         }
 
         .btn-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 15px;
-            flex-wrap: wrap; /* Supaya butang tak bertindih teruk sangat */
+            flex-wrap: wrap; /* Supaya butang membesar tk pecah layout */
+            justify-content: center;
         }
 
-        button {
+        button.main-btn {
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease; /* Bagi effect membesar tu nampak smooth */
+            transition: all 0.2s ease;
+            font-weight: bold;
         }
 
         #yes-btn {
@@ -44,12 +98,7 @@
             color: white;
             font-size: 20px;
             padding: 15px 30px;
-            font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        #yes-btn:hover {
-            background-color: #c2185b;
         }
 
         #no-btn {
@@ -59,63 +108,72 @@
             padding: 15px 30px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        img {
-            max-width: 250px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 <body>
 
-    <img src="https://media.giphy.com/media/ZBQhoZC0nqsmSviPcG/giphy.gif" alt="Cute Cat" id="main-gif">
-    
-    <h1 id="question">Rindu aku tk? 🥺</h1>
-    
-    <div class="btn-container">
-        <button id="yes-btn" onclick="sayYes()">YES!</button>
-        <button id="no-btn" onclick="growYes()">NO.</button>
+    <audio id="myAudio" loop>
+        <source src="MASUKKAN_LINK_LAGU_KAU_KAT_SINI.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="modal-overlay">
+        <h2>Sila jawab soalan nii 😊</h2>
+        <button onclick="startPrank()">Okey</button>
+    </div>
+
+    <div id="main-content" style="display: none;">
+        <img id="main-gif" src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXRtbGc3M3dlb3o0MTJoNmo4Z2Nna3NzbHJtM3F0Y3VreHg1MjJ0cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWZfYnlfaWQmY3Q9Zw/3HUa3QrYvl6Ch6eG6F/giphy.gif" alt="Duck Gif">
+        
+        <h1 id="question">kamu rindu aku ga? 🤔</h1>
+        
+        <div class="btn-container">
+            <button id="yes-btn" class="main-btn" onclick="sayYes()">YES!</button>
+            <button id="no-btn" class="main-btn" onclick="sayNo()">NO.</button>
+        </div>
     </div>
 
     <script>
-        let yesSize = 20;
+        // Data untk logic membesar
+        let noSize = 20;
         let paddingV = 15;
         let paddingH = 30;
         
-        // Senarai ayat bila dia tekan butang NO
-        const noTexts = [
-            "Eh betul ni?", 
-            "Fikir masak-masak!", 
-            "Janganlah macam ni 😭", 
-            "Seriuslah tak rindu?", 
-            "Hati batu betullah!", 
-            "Tekan YES je lah senang!"
-        ];
-        let textIndex = 0;
+        // Data untuk GIFs & Teks
+        const gifAngry = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdGthdDNyZWNieWVuams5M2JhcHU0ZDV2MmhrYWk1czdldDliczluNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lR3pWtb80Hz22UjrYj/giphy.gif"; // GIF 2: Itik marah
+        const gifFinal = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWI0a3dmNGdldHFveWZxcGZtcGJteHlseXM2b2p0dnJreDdqdGdhMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5svKO0Imc6TajSZ1Ro/giphy.gif"; // GIF 3: Spin happy
 
-        function growYes() {
-            const yesBtn = document.getElementById('yes-btn');
-            const noBtn = document.getElementById('no-btn');
-            
-            // Tambah saiz font dan padding butang YES
-            yesSize += 30;
-            paddingV += 15;
-            paddingH += 25;
-            yesBtn.style.fontSize = `${yesSize}px`;
-            yesBtn.style.padding = `${paddingV}px ${paddingH}px`;
-
-            // Tukar teks butang NO ikut senarai array
-            noBtn.innerText = noTexts[textIndex];
-            textIndex = (textIndex + 1) % noTexts.length;
+        // Fungsi pertama: Klik Okey dekat Modal
+        function startPrank() {
+            // Sembunyikan Modal
+            document.getElementById('modal-overlay').style.display = 'none';
+            // Tunjukkan Kandungan Utama
+            document.getElementById('main-content').style.display = 'flex';
+            // Mainkan Lagu (autoplay bermula)
+            document.getElementById('myAudio').play();
         }
 
+        // Fungsi kedua: Bila dia tekan NO
+        function sayNo() {
+            // Tukar GIF jadi Itik Marah
+            document.getElementById('main-gif').src = gifAngry;
+            
+            // Tambah saiz font dan padding butang NO
+            noSize += 30; // Semakin besar (30px tambahan setiap klik)
+            paddingV += 15;
+            paddingH += 25;
+            
+            const noBtn = document.getElementById('no-btn');
+            noBtn.style.fontSize = `${noSize}px`;
+            noBtn.style.padding = `${paddingV}px ${paddingH}px`;
+        }
+
+        // Fungsi ketiga: Bila dia mengalah tekan YES
         function sayYes() {
             // Tukar GIF gembira
-            document.getElementById('main-gif').src = "https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif"; 
+            document.getElementById('main-gif').src = gifFinal; 
             
             // Tukar ayat 
-            document.getElementById('question').innerText = "Hehehe tahu pun rindu! 🥰";
+            document.getElementById('question').innerText = "yeayyy dh ckap dahhh mesti rindu aku ✨🥰";
             
             // Sembunyikan butang lepas dia tekan YES
             document.querySelector('.btn-container').style.display = 'none';
