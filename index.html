@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sila Jawab Jujur</title>
+    <title>Surprise Untuk Awak</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --pink-soft: #ffebf2;
-            --pink-deep: #ff4d8d;
-            --gray-soft: #b0b0b0;
+            --primary: #ff4d8d;
+            --bg: #ffffff;
         }
 
         * {
@@ -19,252 +19,251 @@
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
             height: 100%;
             font-family: 'Varela Round', sans-serif;
-            background-color: #ffffff;
-            display: flex;
-            align-items: center;
+            background-color: var(--bg);
+            display: flex; 
+            align-items: center; 
             justify-content: center;
-            overflow: hidden;
-            transition: background-color 0.5s ease;
+            overflow: hidden; 
+            transition: background 0.5s ease;
+            cursor: default;
         }
 
-        /* Modal Pintu Depan */
-        #modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* Modal Awal (Gatekeeper) */
+        #gatekeeper {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: white; 
+            z-index: 2000;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
             justify-content: center;
-            z-index: 1000;
         }
 
-        #modal-overlay button {
-            background-color: #ff4d8d;
-            color: white;
+        #gatekeeper h2 {
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        #gatekeeper button {
+            background: var(--primary); 
+            color: white; 
             border: none;
-            padding: 15px 50px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(255, 77, 141, 0.3);
-            cursor: pointer;
+            padding: 15px 45px; 
+            border-radius: 50px; 
+            font-size: 1.1rem;
+            cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(255,77,141,0.3);
+            font-family: 'Varela Round', sans-serif;
+            transition: transform 0.2s;
+        }
+
+        #gatekeeper button:active {
+            transform: scale(0.95);
         }
 
         /* Kandungan Utama */
-        #main-content {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 20px;
+        #content { 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            padding: 20px; 
+            z-index: 10; 
         }
 
-        img {
-            max-width: 200px;
-            height: auto;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        img { 
+            width: 220px; 
+            border-radius: 20px; 
+            margin-bottom: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             transition: opacity 0.3s ease;
         }
 
-        h1 {
-            color: #333;
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            min-height: 1.6em; /* Untuk typing effect */
+        h1 { 
+            color: #333; 
+            font-size: 1.6rem; 
+            text-align: center; 
+            margin-bottom: 40px; 
+            min-height: 1.5em; 
         }
 
-        /* Container Butang */
-        .btn-container {
-            position: relative;
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
+        .btns { 
+            position: relative; 
+            display: flex; 
+            gap: 20px; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
         }
 
-        button.main-btn {
-            border: none;
-            border-radius: 50px;
-            font-weight: bold;
+        button.btn {
+            border: none; 
+            border-radius: 50px; 
             font-family: 'Varela Round', sans-serif;
-            cursor: pointer;
+            font-weight: bold; 
+            cursor: pointer; 
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #yes { 
+            background: var(--primary); 
+            color: white; 
+            padding: 15px 35px; 
+            font-size: 1.2rem; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 100;
         }
-
-        button:active { transform: scale(0.9); }
-
-        #yes-btn {
-            background-color: var(--pink-deep);
-            color: white;
-            font-size: 1.2rem;
-            padding: 15px 35px;
-            z-index: 10;
-        }
-
-        #no-btn {
-            background-color: var(--gray-soft);
-            color: white;
-            font-size: 1.1rem;
-            padding: 15px 35px;
+        
+        #no { 
+            background: #e0e0e0; 
+            color: #777; 
+            padding: 15px 35px; 
+            font-size: 1rem; 
             position: relative;
         }
 
-        /* Sincerity Meter */
-        .meter-container {
-            position: fixed;
-            bottom: 30px;
-            width: 200px;
-            height: 8px;
-            background: #eee;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        #meter-fill {
-            width: 100%;
-            height: 100%;
-            background: #4caf50;
-            transition: width 0.3s, background 0.3s;
+        /* Animasi Berdenyut (Pulse) untuk butang YES */
+        @keyframes pulse { 
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,77,141,0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255,77,141,0); }
+            100% { transform: scale(1); }
         }
 
-        /* Animasi Hati & Sparkles */
-        .heart {
-            position: absolute;
-            color: #ff4d8d;
-            font-size: 20px;
+        /* Animasi Hati Terapung */
+        .heart-particle {
+            position: absolute; 
+            color: var(--primary); 
             pointer-events: none;
-            animation: floatUp 3s linear forwards;
+            animation: fly 3s linear forwards; 
+            z-index: 5;
         }
 
-        @keyframes floatUp {
+        @keyframes fly {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-        }
-
-        /* Shake Effect untuk iPhone */
-        .shake { animation: shake 0.2s ease-in-out; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
         }
     </style>
 </head>
 <body>
 
-    <audio id="bgMusic" loop>
-        <source src="LINK_MP3_KAU_KAT_SINI.mp3" type="audio/mpeg">
+    <audio id="audio" loop>
+        <source src="MASUKKAN_LINK_LAGU_KAU_KAT_SINI.mp3" type="audio/mpeg">
     </audio>
 
-    <div id="modal-overlay">
+    <div id="gatekeeper">
         <h2>Sila jawab soalan nii</h2>
-        <button onclick="init()">Okey</button>
+        <button onclick="start()">Okey</button>
     </div>
 
-    <div id="main-content">
-        <img id="display-gif" src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXRtbGc3M3dlb3o0MTJoNmo4Z2Nna3NzbHJtM3F0Y3VreHg1MjJ0cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3HUa3QrYvl6Ch6eG6F/giphy.gif" alt="Duck">
+    <div id="content">
+        <img id="gif" src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXRtbGc3M3dlb3o0MTJoNmo4Z2Nna3NzbHJtM3F0Y3VreHg1MjJ0cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3HUa3QrYvl6Ch6eG6F/giphy.gif" alt="Cute Duck">
         
-        <h1 id="text-display">kamu rindu aku ga?</h1>
+        <h1 id="headline">kamu rindu aku ga?</h1>
         
-        <div class="btn-container">
-            <button id="yes-btn" class="main-btn" onclick="celebrate()">Mestilah</button>
-            <button id="no-btn" class="main-btn" onclick="handleNo()">Tak kot</button>
-        </div>
-
-        <div class="meter-container">
-            <div id="meter-fill"></div>
+        <div class="btns">
+            <button id="yes" class="btn" onclick="finish()">Mestilah</button>
+            <button id="no" class="btn" onclick="moveNo()">Tak kot</button>
         </div>
     </div>
 
     <script>
-        let yesSize = 1.2;
-        let noClicks = 0;
-        const textDisplay = document.getElementById('text-display');
-        const meter = document.getElementById('meter-fill');
-        const body = document.body;
+        let clicks = 0;
+        
+        // Senarai ayat merajuk bila dia tekan NO
+        const phrases = [
+            "Eh, serius ke?", 
+            "Sampai hati...", 
+            "Sikit pun tak rindu?", 
+            "Cepat tekan Mestilah!", 
+            "Tengok butang tu, dah membesar"
+        ];
 
-        function init() {
-            document.getElementById('modal-overlay').style.display = 'none';
-            document.getElementById('main-content').style.display = 'flex';
-            document.getElementById('bgMusic').play().catch(() => console.log("Audio blocked"));
+        function start() {
+            document.getElementById('gatekeeper').style.display = 'none';
+            document.getElementById('content').style.display = 'flex';
+            document.getElementById('audio').play().catch(() => console.log("Audio perlukan interaksi"));
         }
 
-        function handleNo() {
-            noClicks++;
+        function moveNo() {
+            clicks++;
+            const yes = document.getElementById('yes');
+            const no = document.getElementById('no');
+            const gif = document.getElementById('gif');
+
+            // 1. Logik YES membesar & berdenyut
+            let scale = 1 + (clicks * 0.6);
+            yes.style.transform = `scale(${scale})`;
+            yes.style.animation = "pulse 0.8s infinite";
             
-            // 1. Logik Butang Yes Membesar drastik
-            yesSize += 0.8; 
-            const yesBtn = document.getElementById('yes-btn');
-            yesBtn.style.fontSize = `${yesSize}rem`;
-            yesBtn.style.padding = `${15 + (noClicks * 10)}px ${35 + (noClicks * 20)}px`;
-
-            // 2. Logik Butang No Melompat (iPhone Friendly)
-            const noBtn = document.getElementById('no-btn');
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 100);
-            noBtn.style.position = "fixed";
-            noBtn.style.left = x + "px";
-            noBtn.style.top = y + "px";
+            // 2. Logik NO melompat rawak dalam skrin
+            const x = Math.random() * (window.innerWidth - 150);
+            const y = Math.random() * (window.innerHeight - 150);
+            no.style.position = 'fixed';
+            no.style.left = x + 'px';
+            no.style.top = y + 'px';
             
-            // 3. Shake effect & Vibration
-            noBtn.classList.add('shake');
-            setTimeout(() => noBtn.classList.remove('shake'), 200);
-            if (navigator.vibrate) navigator.vibrate(50);
+            // 3. Tukar teks NO
+            no.innerText = phrases[Math.min(clicks - 1, phrases.length - 1)];
 
-            // 4. Tukar GIF ke Marah
-            document.getElementById('display-gif').src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdGthdDNyZWNieWVuams5M2JhcHU0ZDV2MmhrYWk1czdldDliczluNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lR3pWtb80Hz22UjrYj/giphy.gif";
+            // 4. Tukar GIF ke Itik Marah
+            gif.src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdGthdDNyZWNieWVuams5M2JhcHU0ZDV2MmhrYWk1czdldDliczluNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lR3pWtb80Hz22UjrYj/giphy.gif";
+            
+            // 5. Efek latar belakang makin malap
+            document.body.style.background = `rgba(0,0,0,${Math.min(clicks * 0.08, 0.4)})`;
 
-            // 5. Sincerity Meter & BG Glow
-            let percent = Math.max(0, 100 - (noClicks * 20));
-            meter.style.width = percent + "%";
-            if(percent < 50) {
-                meter.style.background = "#f44336";
-                body.style.backgroundColor = "rgba(255, 77, 141, 0.1)";
-            }
+            // 6. Getaran untuk iPhone/Android
+            if(navigator.vibrate) navigator.vibrate(50);
         }
 
-        function celebrate() {
-            // 1. Tukar GIF & Sembunyikan Butang
-            document.getElementById('display-gif').src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWI0a3dmNGdldHFveWZxcGZtcGJteHlseXM2b2p0dnJreDdqdGdhMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5svKO0Imc6TajSZ1Ro/giphy.gif";
-            document.querySelector('.btn-container').style.display = 'none';
-            document.querySelector('.meter-container').style.display = 'none';
-            body.style.backgroundColor = "white";
+        function finish() {
+            const h1 = document.getElementById('headline');
+            
+            // Sembunyikan butang
+            document.querySelector('.btns').style.display = 'none';
+            
+            // Tukar ke GIF Spin Happy
+            document.getElementById('gif').src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWI0a3dmNGdldHFveWZxcGZtcGJteHlseXM2b2p0dnJreDdqdGdhMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5svKO0Imc6TajSZ1Ro/giphy.gif";
+            
+            // Kembalikan latar belakang ke putih bersih
+            document.body.style.background = "white";
 
-            // 2. Typing Effect
-            const finalMsg = "yeayyy dh ckap dahhh mesti rindu aku";
-            textDisplay.innerHTML = "";
+            // Kesan Menaip (Typing Effect)
+            const msg = "yeayyy dh ckap dahhh mesti rindu aku";
+            h1.innerText = "";
             let i = 0;
-            function typeWriter() {
-                if (i < finalMsg.length) {
-                    textDisplay.innerHTML += finalMsg.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 50);
+            function type() {
+                if(i < msg.length) { 
+                    h1.innerText += msg.charAt(i); 
+                    i++; 
+                    setTimeout(type, 70); 
                 }
             }
-            typeWriter();
+            type();
 
-            // 3. Efek Hati Terapung
-            setInterval(createHeart, 300);
+            // Mula keluarkan hati terapung
+            setInterval(spawnHeart, 300);
         }
 
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            // Guna simbol SVG atau font awesome untuk hati comel
-            heart.innerHTML = "❤"; 
-            heart.style.left = Math.random() * 100 + "vw";
-            heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 3000);
+        function spawnHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart-particle';
+            h.innerHTML = "❤"; // Simbol teks biasa, bukan emotikon
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.fontSize = (20 + Math.random() * 20) + "px";
+            h.style.animationDuration = (2 + Math.random() * 3) + "s";
+            document.body.appendChild(h);
+            
+            // Buang elemen hati selepas animasi tamat supaya browser tak lag
+            setTimeout(() => h.remove(), 4000);
         }
     </script>
 </body>
