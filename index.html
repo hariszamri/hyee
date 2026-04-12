@@ -111,7 +111,7 @@
             font-family: 'Varela Round', sans-serif;
             font-weight: bold; 
             cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease; /* Tukar ease supaya nampak smooth bila membesar */
         }
 
         #yes { 
@@ -131,11 +131,11 @@
             position: relative;
         }
 
-        /* Animasi Berdenyut (Pulse) untuk butang YES */
-        @keyframes pulse { 
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,77,141,0.5); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255,77,141,0); }
-            100% { transform: scale(1); }
+        /* Animasi Berdenyut (Cahaya je berdenyut, tak kacau saiz) */
+        @keyframes pulseGlow { 
+            0% { box-shadow: 0 0 0 0 rgba(255,77,141,0.6); }
+            70% { box-shadow: 0 0 0 20px rgba(255,77,141,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,77,141,0); }
         }
 
         /* Animasi Hati Terapung */
@@ -178,7 +178,6 @@
     <script>
         let clicks = 0;
         
-        // Senarai ayat merajuk bila dia tekan NO
         const phrases = [
             "Eh, serius ke?", 
             "Sampai hati...", 
@@ -199,10 +198,11 @@
             const no = document.getElementById('no');
             const gif = document.getElementById('gif');
 
-            // 1. Logik YES membesar & berdenyut
-            let scale = 1 + (clicks * 0.6);
-            yes.style.transform = `scale(${scale})`;
-            yes.style.animation = "pulse 0.8s infinite";
+            // 1. Logik YES membesar & berdenyut (DIBETULKAN)
+            // Sekarang kita besarkan font dan padding supaya saiz butang betul-betul besar
+            yes.style.fontSize = `${1.2 + (clicks * 0.4)}rem`;
+            yes.style.padding = `${15 + (clicks * 10)}px ${35 + (clicks * 20)}px`;
+            yes.style.animation = "pulseGlow 1s infinite";
             
             // 2. Logik NO melompat rawak dalam skrin
             const x = Math.random() * (window.innerWidth - 150);
@@ -220,23 +220,16 @@
             // 5. Efek latar belakang makin malap
             document.body.style.background = `rgba(0,0,0,${Math.min(clicks * 0.08, 0.4)})`;
 
-            // 6. Getaran untuk iPhone/Android
             if(navigator.vibrate) navigator.vibrate(50);
         }
 
         function finish() {
             const h1 = document.getElementById('headline');
             
-            // Sembunyikan butang
             document.querySelector('.btns').style.display = 'none';
-            
-            // Tukar ke GIF Spin Happy
             document.getElementById('gif').src = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWI0a3dmNGdldHFveWZxcGZtcGJteHlseXM2b2p0dnJreDdqdGdhMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5svKO0Imc6TajSZ1Ro/giphy.gif";
-            
-            // Kembalikan latar belakang ke putih bersih
             document.body.style.background = "white";
 
-            // Kesan Menaip (Typing Effect)
             const msg = "yeayyy dh ckap dahhh mesti rindu aku";
             h1.innerText = "";
             let i = 0;
@@ -249,20 +242,18 @@
             }
             type();
 
-            // Mula keluarkan hati terapung
             setInterval(spawnHeart, 300);
         }
 
         function spawnHeart() {
             const h = document.createElement('div');
             h.className = 'heart-particle';
-            h.innerHTML = "❤"; // Simbol teks biasa, bukan emotikon
+            h.innerHTML = "❤"; 
             h.style.left = Math.random() * 100 + "vw";
             h.style.fontSize = (20 + Math.random() * 20) + "px";
             h.style.animationDuration = (2 + Math.random() * 3) + "s";
             document.body.appendChild(h);
             
-            // Buang elemen hati selepas animasi tamat supaya browser tak lag
             setTimeout(() => h.remove(), 4000);
         }
     </script>
